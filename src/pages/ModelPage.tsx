@@ -27,6 +27,8 @@ export default function ModelPage() {
     model.variants.find((v) => v.id === activeVariantId) ?? model.variants[0]
   const Component = variant.component
 
+  const mode = (params.get('mode') as 'raw' | 'skill' | null) ?? 'raw'
+
   const index = models.findIndex((m) => m.id === model.id)
   const prev = models[(index - 1 + models.length) % models.length]
   const next = models[(index + 1) % models.length]
@@ -34,6 +36,12 @@ export default function ModelPage() {
   const setVariant = (id: string) => {
     const np = new URLSearchParams(params)
     np.set('v', id)
+    setParams(np, { replace: true })
+  }
+
+  const setMode = (m: 'raw' | 'skill') => {
+    const np = new URLSearchParams(params)
+    np.set('mode', m)
     setParams(np, { replace: true })
   }
 
@@ -134,11 +142,17 @@ export default function ModelPage() {
       {/* CANVAS HEADER */}
       <section className="border-y border-[color:var(--color-rule)]">
         <div className="max-w-[1280px] mx-auto px-8 py-4 flex items-center justify-between mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
-          <span>The page · Three variants from the same brief</span>
           <span>
-            {variant.status === 'submitted'
-              ? `Variant ${variant.id} · Submitted ${variant.submittedAt ?? ''}`
-              : `Variant ${variant.id} · Pending submission`}
+            {mode === 'skill'
+              ? 'With design skill · Three variants from the same brief'
+              : 'Raw · Three variants from the same brief'}
+          </span>
+          <span>
+            {mode === 'skill'
+              ? `Variant ${variant.id} · Skill-aided run coming soon`
+              : variant.status === 'submitted'
+                ? `Variant ${variant.id} · Submitted ${variant.submittedAt ?? ''}`
+                : `Variant ${variant.id} · Pending submission`}
           </span>
         </div>
       </section>
@@ -154,19 +168,41 @@ export default function ModelPage() {
             className="sticky top-[68px] z-20 flex items-center justify-between gap-4 px-4 py-2.5 border-b border-[color:var(--color-rule)] bg-[color:var(--color-paper-2)]/95 backdrop-blur"
           >
             <div className="flex items-center gap-3 shrink-0">
-              <div className="flex gap-1.5">
+              <div className="hidden md:flex gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
                 <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
                 <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
               </div>
-              <span className="hidden sm:inline mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
-                {model.id}
-              </span>
+
+              {/* Mode toggle — Raw / With skill */}
+              <div className="flex items-center gap-3 p-[5px] rounded-[10px] bg-[color:var(--color-ink)]/[0.05] border border-[color:var(--color-rule)] shrink-0">
+                {(['raw', 'skill'] as const).map((m) => {
+                  const isActive = mode === m
+                  return (
+                    <button
+                      key={m}
+                      onClick={() => setMode(m)}
+                      aria-pressed={isActive}
+                      className="mono text-[8px] uppercase tracking-[0.12em] px-3.5 py-2.5 rounded-[7px] transition-colors whitespace-nowrap shrink-0 leading-none"
+                      style={{
+                        background: isActive
+                          ? 'var(--color-ink)'
+                          : 'transparent',
+                        color: isActive
+                          ? 'var(--color-paper)'
+                          : 'var(--color-ink-soft)',
+                      }}
+                    >
+                      {m === 'raw' ? 'Raw' : 'With skill'}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Variant tabs — center */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-[color:var(--color-ink)]/[0.06] border border-[color:var(--color-rule)]">
-              <span className="mono text-[10px] uppercase tracking-[0.22em] pl-3 pr-1 text-[color:var(--color-ink-soft)]">
+            <div className="flex items-center gap-1 p-[3px] rounded-[10px] bg-[color:var(--color-ink)]/[0.06] border border-[color:var(--color-rule)] shrink-0">
+              <span className="mono text-[10px] uppercase tracking-[0.14em] pl-2.5 pr-1 text-[color:var(--color-ink-soft)] leading-none">
                 Variant
               </span>
               {model.variants.map((v) => {
@@ -176,12 +212,10 @@ export default function ModelPage() {
                     key={v.id}
                     onClick={() => setVariant(v.id)}
                     aria-pressed={isActive}
-                    className="relative mono text-[11px] tracking-[0.16em] px-3 py-1 rounded-full transition-colors"
+                    className="relative mono text-[11px] tracking-[0.04em] px-3 py-1.5 rounded-[7px] transition-colors leading-none shrink-0 min-w-[34px]"
                     style={{
                       background: isActive ? model.color : 'transparent',
-                      color: isActive
-                        ? '#fff'
-                        : 'var(--color-ink-soft)',
+                      color: isActive ? '#fff' : 'var(--color-ink-soft)',
                     }}
                   >
                     {v.id}
@@ -204,9 +238,17 @@ export default function ModelPage() {
             </button>
           </div>
 
-          <Suspense fallback={<Loading />}>
-            <Component key={variant.id} />
-          </Suspense>
+          {mode === 'skill' ? (
+            <SkillComingSoon
+              modelName={model.name}
+              color={model.color}
+              variant={variant.id}
+            />
+          ) : (
+            <Suspense fallback={<Loading />}>
+              <Component key={variant.id} />
+            </Suspense>
+          )}
         </div>
       </section>
 
@@ -243,6 +285,78 @@ function Loading() {
   return (
     <div className="p-24 text-center mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
       Loading the page…
+    </div>
+  )
+}
+
+type SkillProps = { modelName: string; color: string; variant: string }
+
+function SkillComingSoon({ modelName, color, variant }: SkillProps) {
+  return (
+    <div
+      className="relative min-h-[560px] flex items-center justify-center overflow-hidden"
+      style={{
+        background:
+          'radial-gradient(ellipse 700px 400px at 50% 0%, rgba(10,10,11,0.04), transparent), #FAFAFB',
+      }}
+    >
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.35]"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(10,10,11,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,11,0.06) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }}
+      />
+      <div className="relative text-center px-8 max-w-lg">
+        <div
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8 mono text-[10px] uppercase tracking-[0.22em]"
+          style={{
+            background: `${color}14`,
+            color,
+            border: `1px solid ${color}33`,
+          }}
+        >
+          <span
+            className="inline-block w-1.5 h-1.5 rounded-full"
+            style={{ background: color }}
+            aria-hidden
+          />
+          Treatment B · With design skill
+        </div>
+        <h2
+          className="text-4xl md:text-5xl leading-[1.05] tracking-[-0.035em] font-light text-[#0A0A0B]"
+          style={{ fontFamily: "'Geist', sans-serif" }}
+        >
+          Coming soon.
+        </h2>
+        <p className="mt-5 text-[15px] text-[#6B6B73] leading-relaxed max-w-md mx-auto">
+          The same brief, run through{' '}
+          <span className="text-[#0A0A0B]">{modelName}</span> again — this time
+          with our design skill loaded into the context. Three side-by-side
+          variants will land here so you can read what the skill changes.
+        </p>
+
+        <div className="mt-10 mx-auto flex items-center justify-center gap-1.5">
+          {(['01', '02', '03'] as const).map((v) => {
+            const isActive = v === variant
+            return (
+              <span
+                key={v}
+                className="mono text-[10px] tracking-[0.16em] px-2.5 py-1 rounded-full border"
+                style={{
+                  borderColor: 'rgba(10,10,11,0.12)',
+                  background: isActive ? color : 'transparent',
+                  color: isActive ? '#fff' : '#6B6B73',
+                }}
+              >
+                {v}
+              </span>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
