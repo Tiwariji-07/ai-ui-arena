@@ -24,7 +24,7 @@ export default function Submission() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
 
   // Simulation ref
-  const syncIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const syncIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const triggerReplication = () => {
     if (syncStatus === 'syncing') return
@@ -40,7 +40,7 @@ export default function Submission() {
       currentProgress += Math.floor(Math.random() * 25) + 12
       if (currentProgress >= 100) {
         currentProgress = 100
-        clearInterval(syncIntervalRef.current!)
+        if (syncIntervalRef.current) clearInterval(syncIntervalRef.current)
         setSyncStatus('completed')
         setSyncProgress(100)
         setEdgeNodes([

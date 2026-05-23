@@ -24,7 +24,7 @@ export default function Submission() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
 
   // Simulation interval ref
-  const compileIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const compileIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const targets = {
     wasm: { name: 'WASM Build Engine', command: 'forge-compile --target=wasm', file: 'lib_forge.wasm' },
