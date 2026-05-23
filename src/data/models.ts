@@ -29,7 +29,7 @@ const awaiting = (modelId: string, v: '01' | '02' | '03'): Variant => ({
 export const models: Model[] = [
   {
     id: 'claude-opus',
-    name: 'Claude Opus 4',
+    name: 'Claude Opus 4.7',
     provider: 'Anthropic',
     color: '#B8552A',
     variants: [
@@ -40,7 +40,7 @@ export const models: Model[] = [
   },
   {
     id: 'gpt-5',
-    name: 'GPT-5',
+    name: 'GPT-5.5',
     provider: 'OpenAI',
     color: '#2E5D4F',
     variants: [
@@ -51,7 +51,7 @@ export const models: Model[] = [
   },
   {
     id: 'gemini',
-    name: 'Gemini 2.5',
+    name: 'Gemini 3.5 flash',
     provider: 'Google DeepMind',
     color: '#2A4FB8',
     variants: [
@@ -61,14 +61,14 @@ export const models: Model[] = [
     ],
   },
   {
-    id: 'llama',
-    name: 'Llama 4',
-    provider: 'Meta',
+    id: 'composer',
+    name: 'Composer 2.5',
+    provider: 'Cursor',
     color: '#7C2D3A',
     variants: [
-      awaiting('llama', '01'),
-      awaiting('llama', '02'),
-      awaiting('llama', '03'),
+      awaiting('composer', '01'),
+      awaiting('composer', '02'),
+      awaiting('composer', '03'),
     ],
   },
 ]

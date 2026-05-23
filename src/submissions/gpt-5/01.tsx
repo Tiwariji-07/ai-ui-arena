@@ -97,7 +97,7 @@ export default function Submission() {
                     ['Graph', '14 dependencies'],
                     ['Release', '2 approvals left'],
                   ].map(([label, value]) => (
-                    <div key={label} className="rounded-2xl bg-white/8 p-5">
+                    <div key={label} className="rounded-2xl bg-white/[0.08] p-5">
                       <div className="text-sm text-[#aeb7ad]">{label}</div>
                       <div className="mt-2 text-3xl font-black tracking-[-0.05em]">
                         {value}
@@ -154,7 +154,7 @@ export default function Submission() {
           </div>
           <div className="grid gap-5 md:grid-cols-3">
             {testimonials.map((item) => (
-              <figure key={item.name} className="rounded-[2rem] bg-white/8 p-7">
+              <figure key={item.name} className="rounded-[2rem] bg-white/[0.08] p-7">
                 <blockquote className="text-xl leading-8 text-white">
                   &ldquo;{item.quote}&rdquo;
                 </blockquote>
