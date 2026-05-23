@@ -1,6 +1,10 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 
-export const PROMPT = `Design the landing page for a small independent magazine about the craft of software. One screen. No marketing fluff. Use whatever typography, palette, and layout you would choose if it were yours. Make it feel made, not generated.`
+export const PROMPT = `Build a landing page for a developer tool called "Forge" in React with 
+Tailwind CSS. Include: a hero section with headline, subheadline, and 
+two CTAs, a features section with 3 feature cards, a social proof 
+section with 3 testimonials, and a footer.No external 
+libraries or images.`
 
 export const BRIEF_TITLE = 'The Craft'
 
@@ -26,6 +30,17 @@ const awaiting = (modelId: string, v: '01' | '02' | '03'): Variant => ({
   component: lazy(() => import(`../submissions/${modelId}/${v}.tsx`)),
 })
 
+const submitted = (
+  modelId: string,
+  v: '01' | '02' | '03',
+  submittedAt: string,
+): Variant => ({
+  id: v,
+  status: 'submitted',
+  submittedAt,
+  component: lazy(() => import(`../submissions/${modelId}/${v}.tsx`)),
+})
+
 export const models: Model[] = [
   {
     id: 'claude-opus',
@@ -33,9 +48,9 @@ export const models: Model[] = [
     provider: 'Anthropic',
     color: '#B8552A',
     variants: [
-      awaiting('claude-opus', '01'),
-      awaiting('claude-opus', '02'),
-      awaiting('claude-opus', '03'),
+      submitted('claude-opus', '01', '2026-05-23'),
+      submitted('claude-opus', '02', '2026-05-23'),
+      submitted('claude-opus', '03', '2026-05-23'),
     ],
   },
   {
@@ -44,9 +59,9 @@ export const models: Model[] = [
     provider: 'OpenAI',
     color: '#2E5D4F',
     variants: [
-      awaiting('gpt-5', '01'),
-      awaiting('gpt-5', '02'),
-      awaiting('gpt-5', '03'),
+      submitted('gpt-5', '01', '2026-05-23'),
+      submitted('gpt-5', '02', '2026-05-23'),
+      submitted('gpt-5', '03', '2026-05-23'),
     ],
   },
   {
@@ -55,9 +70,9 @@ export const models: Model[] = [
     provider: 'Google DeepMind',
     color: '#2A4FB8',
     variants: [
-      awaiting('gemini', '01'),
-      awaiting('gemini', '02'),
-      awaiting('gemini', '03'),
+      submitted('gemini', '01', '2026-05-23'),
+      submitted('gemini', '02', '2026-05-23'),
+      submitted('gemini', '03', '2026-05-23'),
     ],
   },
   {
@@ -66,9 +81,9 @@ export const models: Model[] = [
     provider: 'Cursor',
     color: '#7C2D3A',
     variants: [
-      awaiting('composer', '01'),
-      awaiting('composer', '02'),
-      awaiting('composer', '03'),
+      submitted('composer', '01', '2026-05-23'),
+      submitted('composer', '02', '2026-05-23'),
+      submitted('composer', '03', '2026-05-23'),
     ],
   },
   {
@@ -77,9 +92,9 @@ export const models: Model[] = [
     provider: 'XAI',
     color: '#7C2D3A',
     variants: [
-      awaiting('grok-build', '01'),
-      awaiting('grok-build', '02'),
-      awaiting('grok-build', '03'),
+      submitted('grok-build', '01', '2026-05-23'),
+      submitted('grok-build', '02', '2026-05-23'),
+      submitted('grok-build', '03', '2026-05-23'),
     ],
   },
   {
@@ -88,9 +103,9 @@ export const models: Model[] = [
     provider: 'Google DeepMind',
     color: '#2A4FB8',
     variants: [
-      awaiting('gemini-3.1', '01'),
-      awaiting('gemini-3.1', '02'),
-      awaiting('gemini-3.1', '03'),
+      submitted('gemini-3.1', '01', '2026-05-23'),
+      submitted('gemini-3.1', '02', '2026-05-23'),
+      submitted('gemini-3.1', '03', '2026-05-23'),
     ],
   },
 ]
