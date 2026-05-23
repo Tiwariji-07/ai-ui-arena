@@ -120,22 +120,11 @@ export default function ModelPage() {
                   {copied ? '✓' : 'Copy'}
                 </button>
               </div>
-              <p className="serif text-[19px] leading-[1.35] text-[color:var(--color-ink)]">
-                <span
-                  aria-hidden
-                  className="serif-italic text-3xl mr-0.5"
-                  style={{ color: model.color }}
-                >
-                  “
-                </span>
+              <p
+                className="serif text-[17px] leading-[1.4] text-[color:var(--color-ink)] pl-4 border-l whitespace-pre-line"
+                style={{ borderColor: model.color }}
+              >
                 {PROMPT}
-                <span
-                  aria-hidden
-                  className="serif-italic text-3xl ml-0.5"
-                  style={{ color: model.color }}
-                >
-                  ”
-                </span>
               </p>
             </div>
           </aside>

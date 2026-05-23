@@ -48,22 +48,10 @@ export default function Home() {
             </button>
           </div>
 
-          <blockquote className="relative">
-            <span
-              aria-hidden
-              className="serif-italic absolute -left-2 md:-left-6 -top-10 text-[120px] leading-none text-[color:var(--color-ink-soft)]/40"
-            >
-              “
-            </span>
-            <p className="serif text-[clamp(28px,3.6vw,52px)] leading-[1.18] tracking-[-0.01em] text-[color:var(--color-ink)]">
+          <blockquote className="relative pl-6 md:pl-8 border-l border-[color:var(--color-rule-strong)]">
+            <p className="serif text-[clamp(28px,3.6vw,48px)] leading-[1.2] tracking-[-0.03em] text-[color:var(--color-ink)] whitespace-pre-line">
               {PROMPT}
             </p>
-            <span
-              aria-hidden
-              className="serif-italic absolute -right-2 -bottom-16 text-[120px] leading-none text-[color:var(--color-ink-soft)]/40"
-            >
-              ”
-            </span>
           </blockquote>
 
           <div className="mt-12 pt-6 border-t border-[color:var(--color-rule)] flex items-center justify-between flex-wrap gap-4 mono text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">

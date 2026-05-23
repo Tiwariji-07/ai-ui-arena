@@ -1,17 +1,22 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-paper: #f2ede3;
-  --color-paper-2: #ece6d9;
-  --color-ink: #14110f;
-  --color-ink-soft: #6e6863;
-  --color-rule: rgba(20, 17, 15, 0.12);
-  --color-rule-strong: rgba(20, 17, 15, 0.24);
+  /* Light technical palette */
+  --color-paper: #ffffff;
+  --color-paper-2: #f6f6f7;
+  --color-paper-3: #ececef;
+  --color-ink: #0a0a0b;
+  --color-ink-soft: #6b6b73;
+  --color-ink-soft-2: #a5a5ad;
+  --color-rule: rgba(10, 10, 11, 0.08);
+  --color-rule-strong: rgba(10, 10, 11, 0.18);
 
-  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  /* Backwards-compat aliases (kept for older class refs) */
+  --font-serif:
+    'Geist', ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-sans:
     'Geist', ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, Menlo, monospace;
 }
 
 :root {
@@ -24,7 +29,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  font-feature-settings: 'ss01', 'cv11';
+  font-feature-settings: 'ss01', 'ss03', 'cv11';
 }
 
 html,
@@ -36,12 +41,19 @@ body,
 }
 
 body {
-  background-image: radial-gradient(
-    rgba(20, 17, 15, 0.05) 1px,
-    transparent 1px
-  );
-  background-size: 28px 28px;
-  background-position: -1px -1px;
+  background-image:
+    radial-gradient(
+      ellipse 900px 600px at 50% -10%,
+      rgba(10, 10, 11, 0.05),
+      transparent
+    ),
+    linear-gradient(rgba(10, 10, 11, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 10, 11, 0.035) 1px, transparent 1px);
+  background-size: auto, 56px 56px, 56px 56px;
+  background-position:
+    0 0,
+    -1px -1px,
+    -1px -1px;
 }
 
 ::selection {
@@ -63,15 +75,20 @@ button {
   padding: 0;
 }
 
+/* Display / body class aliases — kept names so layout still works,
+   but they now render as Geist with weight + tracking that does the work. */
 .serif {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  font-feature-settings: 'ss01';
 }
 .serif-italic {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 300;
+  color: var(--color-ink-soft);
+  letter-spacing: -0.01em;
 }
 .mono {
   font-family: var(--font-mono);
@@ -96,24 +113,12 @@ button {
 .stagger > * {
   animation: fade 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.stagger > *:nth-child(1) {
-  animation-delay: 40ms;
-}
-.stagger > *:nth-child(2) {
-  animation-delay: 110ms;
-}
-.stagger > *:nth-child(3) {
-  animation-delay: 180ms;
-}
-.stagger > *:nth-child(4) {
-  animation-delay: 250ms;
-}
-.stagger > *:nth-child(5) {
-  animation-delay: 320ms;
-}
-.stagger > *:nth-child(6) {
-  animation-delay: 390ms;
-}
+.stagger > *:nth-child(1) { animation-delay: 40ms; }
+.stagger > *:nth-child(2) { animation-delay: 100ms; }
+.stagger > *:nth-child(3) { animation-delay: 160ms; }
+.stagger > *:nth-child(4) { animation-delay: 220ms; }
+.stagger > *:nth-child(5) { animation-delay: 280ms; }
+.stagger > *:nth-child(6) { animation-delay: 340ms; }
 
 .hairline-x {
   border-top: 1px solid var(--color-rule);
@@ -142,7 +147,10 @@ button {
 }
 .model-row:hover .model-dot {
   transform: scale(1.6);
+  box-shadow: 0 0 12px var(--accent);
 }
 .model-dot {
-  transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition:
+    transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 320ms ease;
 }
