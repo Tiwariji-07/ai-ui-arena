@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import {
   Link,
   Navigate,
@@ -43,26 +43,42 @@ export default function ModelPage() {
     setTimeout(() => setCopied(false), 1500)
   }
 
+  useEffect(() => {
+    if (!fullscreen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFullscreen(false)
+    }
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [fullscreen])
+
   if (fullscreen) {
     return (
       <div className="fixed inset-0 z-50 bg-white overflow-auto route-fade">
         <button
           onClick={() => setFullscreen(false)}
-          className="fixed top-5 right-5 z-10 px-3 py-2 bg-[color:var(--color-ink)] text-[color:var(--color-paper)] mono text-[10px] uppercase tracking-[0.2em]"
+          aria-label="Exit fullscreen"
+          className="group fixed top-5 right-5 z-50 inline-flex items-center gap-2 pl-3 pr-2 py-2 rounded-full bg-[color:var(--color-ink)] text-[color:var(--color-paper)] mono text-[10px] uppercase tracking-[0.22em] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] hover:bg-black transition-colors"
         >
-          Exit ✕
+          <span>Exit fullscreen</span>
+          <kbd className="px-1.5 py-0.5 rounded bg-white/15 text-[9px] tracking-normal">
+            Esc
+          </kbd>
+          <span
+            aria-hidden
+            className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center group-hover:bg-white/25 transition-colors"
+          >
+            ✕
+          </span>
         </button>
         <Suspense fallback={<Loading />}>
           <Component key={variant.id} />
         </Suspense>
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
-          <VariantSwitcher
-            variants={model.variants}
-            active={variant.id}
-            color={model.color}
-            onChange={setVariant}
-          />
-        </div>
       </div>
     )
   }
@@ -129,53 +145,79 @@ export default function ModelPage() {
       {/* CANVAS HEADER */}
       <section className="border-y border-[color:var(--color-rule)]">
         <div className="max-w-[1280px] mx-auto px-8 py-4 flex items-center justify-between mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
-          <span>The page · Variant {variant.id}</span>
+          <span>The page · Three variants from the same brief</span>
           <span>
             {variant.status === 'submitted'
-              ? `Submitted ${variant.submittedAt ?? ''}`
-              : 'Placeholder · pending submission'}
+              ? `Variant ${variant.id} · Submitted ${variant.submittedAt ?? ''}`
+              : `Variant ${variant.id} · Pending submission`}
           </span>
-          <button
-            onClick={() => setFullscreen(true)}
-            className="hover:text-[color:var(--color-ink)] transition-colors"
-          >
-            Fullscreen ↗
-          </button>
         </div>
       </section>
 
       {/* RENDERED PAGE */}
       <section className="max-w-[1280px] mx-auto px-8 py-10">
         <div
-          className="relative border border-[color:var(--color-rule)] bg-white overflow-hidden"
+          className="relative border border-[color:var(--color-rule)] bg-white"
           style={{ boxShadow: '0 40px 80px -50px rgba(20,17,15,0.28)' }}
         >
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[color:var(--color-rule)] bg-[color:var(--color-paper-2)]/70">
-            <div className="flex gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
-              <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
-              <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
+          {/* CANVAS CHROME — sticky to viewport while canvas is in view */}
+          <div
+            className="sticky top-[68px] z-20 flex items-center justify-between gap-4 px-4 py-2.5 border-b border-[color:var(--color-rule)] bg-[color:var(--color-paper-2)]/95 backdrop-blur"
+          >
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="flex gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
+                <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
+                <span className="w-2.5 h-2.5 rounded-full border border-[color:var(--color-rule-strong)]" />
+              </div>
+              <span className="hidden sm:inline mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
+                {model.id}
+              </span>
             </div>
-            <span className="mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
-              {model.id} / variant-{variant.id}
-            </span>
-            <span className="w-12" />
+
+            {/* Variant tabs — center */}
+            <div className="flex items-center gap-1 p-1 rounded-full bg-[color:var(--color-ink)]/[0.06] border border-[color:var(--color-rule)]">
+              <span className="mono text-[10px] uppercase tracking-[0.22em] pl-3 pr-1 text-[color:var(--color-ink-soft)]">
+                Variant
+              </span>
+              {model.variants.map((v) => {
+                const isActive = v.id === variant.id
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => setVariant(v.id)}
+                    aria-pressed={isActive}
+                    className="relative mono text-[11px] tracking-[0.16em] px-3 py-1 rounded-full transition-colors"
+                    style={{
+                      background: isActive ? model.color : 'transparent',
+                      color: isActive
+                        ? '#fff'
+                        : 'var(--color-ink-soft)',
+                    }}
+                  >
+                    {v.id}
+                    {v.status === 'awaiting' && !isActive && (
+                      <span
+                        aria-hidden
+                        className="absolute top-1 right-1 w-1 h-1 rounded-full bg-[color:var(--color-ink-soft)]/40"
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            <button
+              onClick={() => setFullscreen(true)}
+              className="shrink-0 mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)] hover:text-[color:var(--color-ink)] transition-colors"
+            >
+              Fullscreen ↗
+            </button>
           </div>
+
           <Suspense fallback={<Loading />}>
             <Component key={variant.id} />
           </Suspense>
-
-          {/* Floating switcher — sticks to bottom of viewport while the canvas is in view */}
-          <div className="sticky bottom-5 z-20 flex justify-center pointer-events-none -mt-20 mb-5">
-            <div className="pointer-events-auto">
-              <VariantSwitcher
-                variants={model.variants}
-                active={variant.id}
-                color={model.color}
-                onChange={setVariant}
-              />
-            </div>
-          </div>
         </div>
       </section>
 
@@ -204,49 +246,6 @@ export default function ModelPage() {
         </div>
       </section>
 
-    </div>
-  )
-}
-
-type SwitcherProps = {
-  variants: { id: string; status: string }[]
-  active: string
-  color: string
-  onChange: (id: string) => void
-}
-
-function VariantSwitcher({ variants, active, color, onChange }: SwitcherProps) {
-  return (
-    <div
-      className="flex items-center gap-1 px-1.5 py-1.5 rounded-full bg-[color:var(--color-ink)] text-[color:var(--color-paper)]"
-      style={{ boxShadow: '0 18px 40px -18px rgba(20,17,15,0.5)' }}
-    >
-        <span className="mono text-[10px] uppercase tracking-[0.24em] pl-3 pr-1 text-[color:var(--color-paper)]/60">
-          Variant
-        </span>
-        {variants.map((v) => {
-          const isActive = v.id === active
-          return (
-            <button
-              key={v.id}
-              onClick={() => onChange(v.id)}
-              aria-pressed={isActive}
-              className="relative mono text-[11px] tracking-[0.16em] px-3 py-1.5 rounded-full transition-colors"
-              style={{
-                background: isActive ? color : 'transparent',
-                color: isActive ? '#fff' : 'rgba(242,237,227,0.7)',
-              }}
-            >
-              {v.id}
-              {v.status === 'awaiting' && !isActive && (
-                <span
-                  aria-hidden
-                  className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-[color:var(--color-paper)]/40"
-                />
-              )}
-            </button>
-          )
-        })}
     </div>
   )
 }
