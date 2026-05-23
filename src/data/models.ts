@@ -24,11 +24,11 @@ export type Model = {
   variants: Variant[]
 }
 
-const awaiting = (modelId: string, v: '01' | '02' | '03'): Variant => ({
-  id: v,
-  status: 'awaiting',
-  component: lazy(() => import(`../submissions/${modelId}/${v}.tsx`)),
-})
+// const awaiting = (modelId: string, v: '01' | '02' | '03'): Variant => ({
+//   id: v,
+//   status: 'awaiting',
+//   component: lazy(() => import(`../submissions/${modelId}/${v}.tsx`)),
+// })
 
 const submitted = (
   modelId: string,
