@@ -82,6 +82,17 @@ export const models: Model[] = [
       awaiting('grok-build', '03'),
     ],
   },
+  {
+    id: 'gemini-3.1',
+    name: 'Gemini 3.1 pro',
+    provider: 'Google DeepMind',
+    color: '#2A4FB8',
+    variants: [
+      awaiting('gemini-3.1', '01'),
+      awaiting('gemini-3.1', '02'),
+      awaiting('gemini-3.1', '03'),
+    ],
+  },
 ]
 
 export const findModel = (modelId?: string) =>
