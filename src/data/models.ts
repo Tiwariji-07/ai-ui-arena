@@ -71,6 +71,17 @@ export const models: Model[] = [
       awaiting('composer', '03'),
     ],
   },
+  {
+    id: 'grok-build',
+    name: 'Grok Build 0.1 beta',
+    provider: 'XAI',
+    color: '#7C2D3A',
+    variants: [
+      awaiting('grok-build', '01'),
+      awaiting('grok-build', '02'),
+      awaiting('grok-build', '03'),
+    ],
+  },
 ]
 
 export const findModel = (modelId?: string) =>
